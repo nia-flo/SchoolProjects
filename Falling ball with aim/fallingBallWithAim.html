@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="col-md-8 mx-auto mt-3">
+        <canvas class="mx-auto" id="billiard" width="700" height="400"
+            style="border:3px solid black; background-color: rgb(160, 210, 223);">
+            Your browser does not support the HTML5 canvas tag.</canvas>
+
+        <form id="deltas" action="/action_page.php" class="ml-3 my-2 form-group">
+            <div class="row px-0 col-md-7 mx-auto">
+                <div class="col-md-7">
+                    <label>X coordinate:</label>
+                    <input class="form-control mb-2" type="text" name="x">
+                    <label>Y coordinate:</label>
+                    <input class="form-control mb-2" type="text" name="y">
+                    <label>Starting speed:</label>
+                    <input class="form-control mb-2" type="text" name="speed">
+                    <label>Angle (degrees):</label>
+                    <input class="form-control" type="text" name="angle">
+                </div>
+                <div class="col-md-2 my-auto">
+                    <button onclick="changeDeltas()" class="btn btn-dark mt-0">Apply changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        var x = 95;
+        var y = 50;
+        var dX = 0;
+        var dY = 1;
+        var r = 6;
+
+        var c = document.getElementById("billiard");
+        var context = c.getContext("2d");
+
+        var aimX = randomInteger(r, context.canvas.width - r);
+        var aimY = randomInteger(r, context.canvas.height - r);
+
+        setInterval(drawBall, 25);
+
+        function drawBall() {
+            if (x + dX - r < 0 || x + dX + r > context.canvas.width) {
+                dX = -dX;
+            }
+            if (y + dY - r < 0 || y + dY + r > context.canvas.height) {
+                dY = -dY;
+            }
+
+            dY += 0.98;
+
+            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+
+            context.beginPath();
+            context.arc(x, y, r, 0, 2 * Math.PI);
+            context.fillStyle = "rgb(58, 66, 68)";
+            context.fill();
+            context.strokeStyle = "rgb(58, 66, 68)";
+            context.stroke();
+
+            context.beginPath();
+            context.arc(aimX, aimY, r, 0, 2 * Math.PI);
+            context.fillStyle = "rgb(240, 101, 101)";
+            context.fill();
+            context.strokeStyle = "rgb(240, 101, 101)";
+            context.stroke();
+
+if (Math.abs(x - aimX) < 2 * r && Math.abs(y - aimY) < 2 * r) {
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+
+    context.beginPath();
+    context.font = "30px Comic Sans MS";
+    context.fillStyle = "red";
+    context.textAlign = "center";
+    context.fillText("You won!", context.canvas.width / 2, context.canvas.height / 2);
+
+    return;
+}
+
+            x += dX;
+
+            y += dY;
+            if (y - r < 0) {
+                y = r;
+            }
+            if (y + r > context.canvas.height) {
+                y = context.canvas.height - r;
+            }
+        }
+
+        function changeDeltas() {
+            var deltas = document.getElementById("deltas");
+
+            x = parseInt(deltas.elements[0].value, 10);
+            if (x - r < 0) {
+                x = r;
+            }
+            if (x + r > context.canvas.width) {
+                x = context.canvas.width - r;
+            }
+
+            y = parseInt(deltas.elements[1].value, 10);
+            if (y - r < 0) {
+                y = r;
+            }
+            if (y + r > context.canvas.height) {
+                y = context.canvas.height - r;
+            }
+
+            var speed = parseInt(deltas.elements[2].value, 10);
+            var angle = parseInt(deltas.elements[3].value, 10);
+
+            speed /= 10;
+
+            dX = Math.cos(angle * Math.PI / 180) * speed;
+            dY = -Math.sin(angle * Math.PI / 180) * speed;
+        }
+
+        function randomInteger(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+    </script>
+
+</body>
+
+</html>
