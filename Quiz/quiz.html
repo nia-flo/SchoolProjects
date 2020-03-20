@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <h1 class="text-center mb-3">Disney character quiz</h1>
+
+    <div class="col-md-6 mx-auto">
+
+        <div id="question1" class="jumbotron mb-3 py-2 border border-dark bg-transparent">
+            <h5>What princess creates an ice fortress and hides herself away?</h5>
+            <input type="radio" id="question1-answer1" name="question1Answer" value="Belle" /> Belle
+            <br>
+            <input type="radio" id="question1-answer2" name="question1Answer" value="Elsa" /> Elsa
+            <br>
+            <input type="radio" id="question1-answer3" name="question1Answer" value="Snow White" /> Snow White
+            <br>
+            <input type="radio" id="question1-answer4" name="question1Answer" value="Cinderella" /> Cinderella
+
+            <div id="question1-summary"></div>
+        </div>
+
+        <div id="question2" class="jumbotron mb-3 py-2 border border-dark bg-transparent">
+            <h5>What is the name of the boy who refuses to grow up?</h5>
+            <input type="radio" id="question2-answer1" name="question2Answer" value="Michael Darling" /> Michael Darling
+            <br>
+            <input type="radio" id="question2-answer2" name="question2Answer" value="Peter Pan" /> Peter Pan
+            <br>
+            <input type="radio" id="question2-answer3" name="question2Answer" value="Robin Hood" /> Robin Hood
+            <br>
+            <input type="radio" id="question2-answer4" name="question2Answer" value="Alladin" /> Alladin
+
+            <div id="question2-summary"></div>
+        </div>
+
+        <div id="question3" class="jumbotron mb-3 py-2 border border-dark bg-transparent">
+            <h5>Snow White bit into this piece of fruit before falling into a deep slumber:</h5>
+            <input type="radio" id="question3-answer1" name="question3Answer" value="Apple" /> Apple
+            <br>
+            <input type="radio" id="question3-answer2" name="question3Answer" value="Nectarine" /> Nectarine
+            <br>
+            <input type="radio" id="question3-answer3" name="question3Answer" value="Pomegranate " /> Pomegranate
+            <br>
+            <input type="radio" id="question3-answer4" name="question3Answer" value="Plum" /> Plum
+
+            <div id="question3-summary"></div>
+        </div>
+
+        <div id="question4" class="jumbotron mb-3 py-2 border border-dark bg-transparent">
+            <h5>What young boy creates the make-believe world of the Hundred Acre Wood?</h5>
+            <input type="radio" id="question4-answer1" name="question4Answer" value="Peter Pan" /> Peter Pan
+            <br>
+            <input type="radio" id="question4-answer2" name="question4Answer" value="Flynn Ryder" /> Flynn Ryder
+            <br>
+            <input type="radio" id="question4-answer3" name="question4Answer" value="Christopher Robin" /> Christopher
+            Robin
+            <br>
+            <input type="radio" id="question4-answer4" name="question4Answer" value="Simba" /> Simba
+
+            <div id="question4-summary"></div>
+        </div>
+
+        <div id="submit" class="col-md-5 mx-auto mb-2">
+            <button onclick="SubmitTest()" class="btn btn-outline-dark">Submit test</button>
+        </div>
+
+        <div id="edit" class="col-md-5 mx-auto mb-2"></div>
+
+        <div id="allAnswersAreCorrect" class="mb-3"></div>
+    </div>
+
+</body>
+
+<script>
+    var answerKey = ["Elsa", "Peter Pan", "Apple", "Christopher Robin"];
+
+    function SubmitTest() {
+
+        var correctAnswers = 0, questionsCount
+
+        for (var i = 1; ; i++) {
+            var question = document.getElementById("question" + i)
+
+            if (question == undefined) {
+                questionsCount = i - 1;
+
+                break;
+            }
+
+            var answer, isAnswered = false;
+            for (var j = 1; ; j++) {
+                answer = document.getElementById(question.id + "-answer" + j);
+
+                if (answer == undefined) {
+                    if (!isAnswered) {
+                        if (question.classList.contains('border-dark')) {
+                            question.classList.remove('border-dark');
+                        }
+                        if (question.classList.contains('border-success')) {
+                            question.classList.remove('border-success');
+                        }
+                        question.classList.toggle('border-danger');
+                        
+                        document.getElementById(question.id + "-summary").innerHTML = '<a class="text-danger"><b>Incorrect Answer</b></a>';
+                    }
+
+                    break;
+                }
+
+                answer.disabled = true;
+
+                if (answer.checked) {
+                    isAnswered = true;
+
+                    answer = document.getElementById(question.id + "-answer" + j).value;
+
+                    if (answer == answerKey[i - 1]) {
+                        correctAnswers++;
+
+                        if (question.classList.contains('border-dark')) {
+                            question.classList.remove('border-dark');
+                        }
+                        if (question.classList.contains('border-danger')) {
+                            question.classList.remove('border-danger');
+                        }
+                        question.classList.toggle('border-success');
+
+                        document.getElementById(question.id + "-summary").innerHTML = '<a class="text-success"><b>Correct answer</b></a>';
+                    }
+                    else {
+                        if (question.classList.contains('border-dark')) {
+                            question.classList.remove('border-dark');
+                        }
+                        if (question.classList.contains('border-success')) {
+                            question.classList.remove('border-success');
+                        }
+                        question.classList.toggle('border-danger');
+
+                        document.getElementById(question.id + "-summary").innerHTML = '<a class="text-danger"><b>Incorrect Answer</b></a>';
+                    }
+                }
+            }
+        }
+
+        console.log(questionsCount);
+
+        document.getElementById('submit').innerHTML = "";
+
+        console.log(correctAnswers + " " + questionsCount);
+        if (correctAnswers < questionsCount) {
+            document.getElementById('edit').innerHTML = '<button onclick="EditAnswers()" class="btn btn-outline-dark">Edit answers</button>';
+        }
+        else {
+            document.getElementById('allAnswersAreCorrect').innerHTML = '<h5 class="text-success text-center"><b>All answers are correct!</b></h5>';
+        }
+    }
+
+    function EditAnswers() {
+        for (var i = 1; ; i++) {
+            var question = document.getElementById("question" + i);
+
+            if (question == undefined) {
+                break;
+            }
+
+            for (var j = 1; ; j++) {
+                var answer = document.getElementById(question.id + "-answer" + j);
+
+                if (answer == undefined) {
+                    break;
+                }
+
+                answer.disabled = false;
+            }
+        }
+
+        document.getElementById('edit').innerHTML = "";
+
+        document.getElementById('submit').innerHTML = '<button onclick="SubmitTest()" class="btn btn-outline-dark">Submit test</button>';
+    }
+</script>
+
+</html>
